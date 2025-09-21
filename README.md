@@ -9,6 +9,7 @@
 *   **Облачная платформа:** Yandex Cloud
 *   **Infrastructure as Code (IaC):** Terraform
 *   **Configuration Management:** Ansible
+*   **Сбор метрик:** Prometheus
 *   **Логирование:** Loki, Promtail
 *   **Визуализация:** Grafana
 *   **Веб-сервер:** Nginx
@@ -46,6 +47,8 @@
 <img width="1920" height="1080" alt="Снимок экрана (1307)" src="https://github.com/user-attachments/assets/9bfd8e15-ac55-4860-b5ef-7944015c8f75" />
 
 <img width="1920" height="1080" alt="Снимок экрана (1313)" src="https://github.com/user-attachments/assets/19244e45-bf70-4b66-8cc7-c70f95fbb6fc" />
+
+### ` Prometheus `
 
 <img width="1920" height="1080" alt="Снимок экрана (1321)" src="https://github.com/user-attachments/assets/6db92b39-b5ac-489a-ae2f-76b83d9de115" />
 
