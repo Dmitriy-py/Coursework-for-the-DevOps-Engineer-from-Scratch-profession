@@ -52,11 +52,21 @@
 
 <img width="1920" height="1080" alt="Снимок экрана (1321)" src="https://github.com/user-attachments/assets/6db92b39-b5ac-489a-ae2f-76b83d9de115" />
 
+### ` Loki `
 
+<img width="1920" height="1080" alt="Снимок экрана (1347)" src="https://github.com/user-attachments/assets/48272031-5bd2-4cf6-8bb8-12955a00d4a5" />
 
+### ` Promtail `
 
+<img width="1920" height="1080" alt="Снимок экрана (1450)" src="https://github.com/user-attachments/assets/c4e42a83-b21b-46d7-bfae-eb7c2e5c3c11" />
 
+<img width="1920" height="1080" alt="Снимок экрана (1451)" src="https://github.com/user-attachments/assets/f505df5b-fc75-4c14-8aac-5dc7014bd88b" />
 
+### ` Grafana `
+
+<img width="1920" height="1080" alt="Снимок экрана (1443)" src="https://github.com/user-attachments/assets/603275b0-feb5-4425-aaa9-7b1a26b77b86" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1343)" src="https://github.com/user-attachments/assets/98e5b93a-64b7-4a2f-b9de-2e683c7b68f2" />
 
 
 
