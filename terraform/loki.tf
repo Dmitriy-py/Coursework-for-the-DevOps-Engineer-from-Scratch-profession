@@ -1,0 +1,35 @@
+# loki.tf
+resource "yandex_compute_instance" "loki_vm" {
+  name               = "loki-vm"
+  zone               = "ru-central1-b" # Убедитесь, что это ваша зона
+  platform_id        = "standard-v1"
+  hostname           = "loki-vm"
+  allow_stopping_for_update = true
+
+  resources {
+    cores  = 8
+    memory = 32
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd8l04iucc4vsh00rkb1" # ID образа Ubuntu 22.04 LTS
+      size     = 300
+    }
+  }
+
+  network_interface {
+    subnet_id          = yandex_vpc_subnet.private_subnet_b.id # <--- УБЕДИТЕСЬ, ЧТО ЗДЕСЬ private_subnet_b.id
+    security_group_ids = [yandex_vpc_security_group.loki_sg.id]
+    nat                = true
+  }
+
+  metadata = {
+    ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
+  }
+}
+
+output "loki_internal_ip" {
+  description = "Internal IP address of the Loki VM"
+  value       = yandex_compute_instance.loki_vm.network_interface.0.ip_address
+}
