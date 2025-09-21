@@ -76,8 +76,55 @@
 
 <img width="1920" height="1080" alt="Снимок экрана (1343)" src="https://github.com/user-attachments/assets/98e5b93a-64b7-4a2f-b9de-2e683c7b68f2" />
 
+## Работа балансировщика
 
+### ` Grafana--my-alb-load_balancer `
 
+<img width="1920" height="1080" alt="Снимок экрана (1466)" src="https://github.com/user-attachments/assets/673e0895-2efd-4953-8da1-78b583dc1a40" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1467)" src="https://github.com/user-attachments/assets/17a62be0-0575-4e65-9dbb-cc9aeb15eb8c" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1468)" src="https://github.com/user-attachments/assets/7efb7d8b-a0a7-4b85-8f09-90fd51e4558d" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1469)" src="https://github.com/user-attachments/assets/6eb45c19-f658-4481-91ee-6995292e86d8" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1470)" src="https://github.com/user-attachments/assets/04ec8eb6-6367-4aad-a67a-da04437fcd48" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1471)" src="https://github.com/user-attachments/assets/ca8f13bf-f37f-481b-ac83-454bd8bbd068" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1472)" src="https://github.com/user-attachments/assets/64a747d8-355b-4b45-bc1f-503c04289da2" />
+
+## Сбор метрик
+
+### ` Grafana-Prometheus `
+
+<img width="1920" height="1080" alt="Снимок экрана (1457)" src="https://github.com/user-attachments/assets/cda50d56-6f93-492e-83bb-7653facb0245" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1458)" src="https://github.com/user-attachments/assets/54f11ee9-adc4-4c4f-8655-97828be66e52" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1459)" src="https://github.com/user-attachments/assets/1cc7cfea-21d7-4c31-9048-de0f888195e2" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1460)" src="https://github.com/user-attachments/assets/d75f8696-a861-490e-a6c0-1c13ab988aa7" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1461)" src="https://github.com/user-attachments/assets/80932020-8f91-4114-90c1-fe3b1ab5ee88" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1462)" src="https://github.com/user-attachments/assets/e7a10c12-f146-4baf-9e92-aec412c4b9ca" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1463)" src="https://github.com/user-attachments/assets/edafcd43-c850-4706-91bc-4bc66017ccfb" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1464)" src="https://github.com/user-attachments/assets/efd85f8a-f495-45c5-8430-e6959e8c9c4b" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1465)" src="https://github.com/user-attachments/assets/9ff0442e-e2e2-46f5-bd29-5d0cd358ed02" />
+
+## Сбор логов
+
+### ` Grafana-Loki `
+
+<img width="1920" height="1080" alt="Снимок экрана (1454)" src="https://github.com/user-attachments/assets/ad6dd075-c3cc-4930-862c-2a0b15b5f421" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1455)" src="https://github.com/user-attachments/assets/3894d6f3-9afc-4674-bcee-92c2071d718b" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1456)" src="https://github.com/user-attachments/assets/6a7f2480-3a53-4b0d-a702-6c45fe26e865" />
 
 
 
