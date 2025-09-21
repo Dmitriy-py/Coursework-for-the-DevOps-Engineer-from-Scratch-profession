@@ -29,13 +29,15 @@
 
 <img width="1920" height="1080" alt="Снимок экрана (1482)" src="https://github.com/user-attachments/assets/50ae16ab-652d-4c04-87b2-ca6a4b9fa234" />
 
-### ` ansible `
+### ` ansible-nginx_install.yml `
 
 <img width="1920" height="1080" alt="Снимок экрана (1302)" src="https://github.com/user-attachments/assets/363310e3-bf74-4547-b3aa-c08c9f97f760" />
 
 <img width="1920" height="1080" alt="Снимок экрана (1303)" src="https://github.com/user-attachments/assets/7c86d609-ffb4-4951-aa5e-33dbdf2b64a7" />
 
 <img width="1920" height="1080" alt="Снимок экрана (1304)" src="https://github.com/user-attachments/assets/4753607e-a6bc-4381-8487-ce6e28ebf43f" />
+
+### ` ansible-nginx_install.yml -site_content `
 
 <img width="1920" height="1080" alt="Снимок экрана (1305)" src="https://github.com/user-attachments/assets/c584dc6d-16c4-4988-a186-d663b6c1fe72" />
 
