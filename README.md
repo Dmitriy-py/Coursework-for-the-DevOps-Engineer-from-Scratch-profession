@@ -24,6 +24,14 @@
 
 <img width="1920" height="1080" alt="Снимок экрана (1480)" src="https://github.com/user-attachments/assets/0cbc60ea-006f-4a71-a68a-de583e9fb0ab" />
 
+<img width="1920" height="1080" alt="Снимок экрана (1484)" src="https://github.com/user-attachments/assets/eb64d033-c8e2-4d03-8c5e-e5022ca8a538" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1485)" src="https://github.com/user-attachments/assets/8284d22f-227e-4b3a-b61a-e779b93bb0a2" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1486)" src="https://github.com/user-attachments/assets/dad9abca-5dd1-4613-a414-31b60d84de92" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1487)" src="https://github.com/user-attachments/assets/365cdd14-b7bc-4390-8fac-1d5301b94695" />
+
 ## Развертывание (Deployment): 
 
 ### ` Terraform `
