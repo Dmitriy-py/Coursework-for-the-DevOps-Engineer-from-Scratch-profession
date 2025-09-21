@@ -126,6 +126,20 @@
 
 <img width="1920" height="1080" alt="Снимок экрана (1456)" src="https://github.com/user-attachments/assets/6a7f2480-3a53-4b0d-a702-6c45fe26e865" />
 
+<img width="1920" height="1080" alt="Снимок экрана (1473)" src="https://github.com/user-attachments/assets/b5adf627-3e51-4dbe-a62c-7c421327c599" />
+
+
+## Резервное копирование
+
+### ` Снимки (Snapshots) `
+
+<img width="1920" height="1080" alt="Снимок экрана (1474)" src="https://github.com/user-attachments/assets/5acb2c9a-2d4c-4584-82fa-581e92c303ae" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1475)" src="https://github.com/user-attachments/assets/9894aaa7-b571-47a2-ac10-121569fb32a5" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1476)" src="https://github.com/user-attachments/assets/e69ef359-86e0-4eb4-983f-9a48f58e4a5c" />
+
+<img width="1920" height="1080" alt="Снимок экрана (1477)" src="https://github.com/user-attachments/assets/5ba69504-e1ea-4f46-baa2-eecfa5ef73e9" />
 
 
 
