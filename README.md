@@ -25,7 +25,11 @@
 
 ## Развертывание (Deployment): 
 
+### ` Terraform `
+
 <img width="1920" height="1080" alt="Снимок экрана (1482)" src="https://github.com/user-attachments/assets/50ae16ab-652d-4c04-87b2-ca6a4b9fa234" />
+
+### ` ansible `
 
 <img width="1920" height="1080" alt="Снимок экрана (1302)" src="https://github.com/user-attachments/assets/363310e3-bf74-4547-b3aa-c08c9f97f760" />
 
