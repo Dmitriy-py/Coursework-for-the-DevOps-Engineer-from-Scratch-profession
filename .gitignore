@@ -20,4 +20,3 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
-git rm --cached --ignore-unmatch yandex_cloud_infra.yml
