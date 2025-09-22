@@ -1,0 +1,22 @@
+---
+- name: Configure Prometheus Server to Scrape Exporters
+  hosts: prometheus
+  become: yes
+  vars:
+    web_server_a_ip: "10.1.0.30" # !!! Замените на актуальный IP
+    web_server_b_ip: "10.2.0.6" # !!! Замените на актуальный IP
+  tasks:
+    - name: Обновить файл конфигурации Prometheus
+      template:
+        src: "{{ playbook_dir }}/ansible_templates/prometheus.yml.j2"
+        dest: "/etc/prometheus/prometheus.yml"
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Перезапустить Prometheus
+
+  handlers:
+    - name: Перезапустить Prometheus
+      service:
+        name: prometheus
+        state: restarted
