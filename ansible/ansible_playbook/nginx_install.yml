@@ -1,0 +1,79 @@
+---
+- name: Configure Web Servers with Nginx and Deploy AI Website
+  hosts: webservers
+  become: yes
+
+  vars:
+    app_root_dir: "/var/www/ai_website" # Корневая директория для вашего сайта на сервере
+    document_root_dir: "{{ app_root_dir }}/html" # Папка для HTML-файлов
+
+  tasks:
+    - name: Обновить кэш apt и установить NGINX
+      apt:
+        name: nginx
+        state: latest
+        update_cache: yes
+
+    - name: Создать корневые директории для сайта
+      ansible.builtin.file:
+        path: "{{ document_root_dir }}"
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+      when: app_root_dir is defined and document_root_dir is defined
+
+    - name: Копировать файлы сайта на сервер
+      copy:
+        src: "{{ playbook_dir }}/site_content/" # Источник - локальная папка site_content
+        dest: "{{ document_root_dir }}/" # Назначение на сервере
+        owner: www-data
+        group: www-data
+        mode: '0644'
+      when: document_root_dir is defined
+
+    - name: Применить шаблон конфигурации NGINX
+      template:
+        src: "{{ playbook_dir }}/ansible_templates/nginx.conf.j2" # Источник - локальный шаблон
+        dest: "/etc/nginx/sites-available/default"
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Перезапустить NGINX
+      when: document_root_dir is defined
+
+    - name: Убедиться, что новый сайт включен (создать симлинк)
+      file:
+        src: "/etc/nginx/sites-available/default"
+        dest: "/etc/nginx/sites-enabled/default"
+        state: link
+        force: yes # Перезаписать, если симлинк уже существует
+      notify: Перезапустить NGINX
+
+    - name: Удалить дефолтную конфигурацию Nginx (если она есть)
+      file:
+        path: "/etc/nginx/sites-enabled/default_nginx.conf" # Или другое имя дефолтного файла
+        state: absent
+      notify: Перезапустить NGINX
+      ignore_errors: yes # Игнорировать, если файла нет
+
+    - name: Запустить службу NGINX (убедиться, что она работает)
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Проверить статус службы NGINX
+      command: systemctl status nginx
+      register: nginx_status
+      changed_when: false
+
+    - name: Вывести статус NGINX
+      debug:
+        msg: "{{ nginx_status.stdout_lines }}"
+
+  handlers:
+    - name: Перезапустить NGINX
+      service:
+        name: nginx
+        state: restarted
