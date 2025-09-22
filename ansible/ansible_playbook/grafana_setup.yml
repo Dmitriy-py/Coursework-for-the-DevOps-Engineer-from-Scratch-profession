@@ -1,0 +1,92 @@
+---
+- name: Setup Grafana Server
+  hosts: grafana
+  become: yes
+  vars:
+    prometheus_ip: "{{ hostvars['prometheus-vm'].ansible_host }}" # IP Prometheus
+  tasks:
+    - name: Обновить кэш apt
+      apt:
+        update_cache: yes
+
+    - name: Установить пакеты для apt-репозитория Grafana
+      apt:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - apt-transport-https
+        - software-properties-common
+        - wget
+
+        # ... (предыдущие задачи) ...
+
+    - name: Скопировать GPG-ключ Grafana с локальной машины и добавить его
+      ansible.builtin.copy:
+        src: /home/vm1/grafana_gpg.key # Путь к ключу на локальной машине
+        dest: /etc/apt/trusted.gpg.d/grafana.gpg # Целевой путь на Grafana VM
+        owner: root
+        group: root
+        mode: '0644'
+
+        # ... (следующие задачи) ...
+
+    - name: Установить зависимости для Grafana DEB-пакета
+      ansible.builtin.apt:
+        name:
+          - adduser
+          - libfontconfig1
+          - musl
+        state: present
+        update_cache: yes # Обновим кэш перед установкой зависимостей
+
+    - name: Проверить наличие DEB-пакета Grafana
+      ansible.builtin.stat:
+        path: /tmp/grafana-enterprise_12.1.1_16903967602_linux_amd64.deb
+      register: grafana_deb_file
+      
+    - name: Вывести ошибку, если DEB-пакет не найден
+      ansible.builtin.fail:
+        msg: "DEB-пакет Grafana не найден в /tmp/grafana-enterprise_12.1.1_16903967602_linux_amd64.deb. Пожалуйста, скопируйте его вручную."
+      when: not grafana_deb_file.stat.exists
+
+    - name: Установить Grafana из DEB-пакета
+      ansible.builtin.apt:
+        deb: /tmp/grafana-enterprise_12.1.1_16903967602_linux_amd64.deb
+        state: present
+    - name: Запустить и включить Grafana service
+      service:
+        name: grafana-server
+        state: started
+        enabled: yes
+
+    - name: Проверить статус Grafana
+      command: systemctl status grafana-server
+      register: grafana_status
+      changed_when: false
+    - debug:
+        msg: "{{ grafana_status.stdout_lines }}"
+
+    # --- Настройка Prometheus как источника данных в Grafana ---
+    - name: Создать директорию для провайдера данных Grafana
+      ansible.builtin.file:
+        path: /etc/grafana/provisioning/datasources
+        state: directory
+        owner: root
+        group: grafana
+        mode: '0755'
+
+    - name: Добавить Prometheus как источник данных в Grafana
+      template:
+        src: "{{ playbook_dir }}/ansible_templates/prometheus_datasource.yml.j2"
+        dest: /etc/grafana/provisioning/datasources/prometheus.yml
+        owner: root
+        group: grafana
+        mode: '0644'
+      notify: Перезапустить Grafana
+
+# --- Handlers для Grafana ---
+  handlers:
+    - name: Перезапустить Grafana
+      service:
+        name: grafana-server
+        state: restarted
