@@ -54,6 +54,9 @@
 
 <img width="1920" height="1080" alt="Снимок экрана (1307)" src="https://github.com/user-attachments/assets/9bfd8e15-ac55-4860-b5ef-7944015c8f75" />
 
+<img width="1200" height="799" alt="image" src="https://github.com/user-attachments/assets/2971d26c-5813-4a7f-b778-eab04db464e0" />
+
+
 <img width="1920" height="1080" alt="Снимок экрана (1313)" src="https://github.com/user-attachments/assets/19244e45-bf70-4b66-8cc7-c70f95fbb6fc" />
 
 ### ` Prometheus `
