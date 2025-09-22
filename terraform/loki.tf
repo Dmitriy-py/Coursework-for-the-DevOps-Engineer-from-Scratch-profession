@@ -28,8 +28,3 @@ resource "yandex_compute_instance" "loki_vm" {
     ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
   }
 }
-
-output "loki_internal_ip" {
-  description = "Internal IP address of the Loki VM"
-  value       = yandex_compute_instance.loki_vm.network_interface.0.ip_address
-}
