@@ -1,0 +1,26 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    root /var/www/ai_website/html; # Путь, куда будут скопированы файлы сайта
+    index index.html index.htm;
+
+    server_name {{ ansible_default_ipv4.address }}; # Используем IP адрес сервера
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # Добавлено: Nginx status для Nginx Exporter
+    location /nginx_status {
+        stub_status on; # Включает страницу статуса
+        access_log off; # Отключает логирование доступа для этой страницы
+        allow 127.0.0.1; # Разрешить доступ только локально
+        # deny all; # Можно оставить, если не хотите, чтобы кто-то другой видел
+    }
+
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /var/www/ai_website/html;
+    }
+}
