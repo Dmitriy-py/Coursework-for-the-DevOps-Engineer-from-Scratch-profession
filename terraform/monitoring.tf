@@ -126,15 +126,3 @@ resource "yandex_compute_instance" "prometheus_vm" {
    }
  }
 
-
-  # Output для Prometheus IP (для Ansible и конфигурации)
-   output "prometheus_internal_ip" {
-     description = "Internal IP address of the Prometheus VM"
-       value       = yandex_compute_instance.prometheus_vm.network_interface.0.ip_address
- }
-
-  # Output для Grafana IP (ЗАКОММЕНТИРОВАНО)
-  output "grafana_internal_ip" {
-   description = "Internal IP address of the Grafana VM"
-     value       = yandex_compute_instance.grafana_vm.network_interface.0.ip_address
- }
