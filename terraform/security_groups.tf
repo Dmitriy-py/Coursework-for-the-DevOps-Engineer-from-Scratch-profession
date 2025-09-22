@@ -8,6 +8,11 @@ resource "yandex_vpc_security_group" "bastion_sg" {
     v4_cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
+    protocol    = "tcp"
+    port        = 80
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
     protocol    = "icmp"
     from_port   = 0
     to_port     = 0
