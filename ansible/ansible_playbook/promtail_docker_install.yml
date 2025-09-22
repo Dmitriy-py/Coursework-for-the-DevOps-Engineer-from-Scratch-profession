@@ -1,0 +1,77 @@
+---
+- name: Развертывание Promtail в Docker на веб-серверах
+  hosts: webservers
+  become: yes
+  vars:
+    loki_host: "10.1.0.4" # Внутренний IP вашей Loki VM
+    promtail_docker_image_tar: "promtail-2.9.0.tar"
+    promtail_docker_image_name: "grafana/promtail:2.9.0"
+    promtail_config_path: /opt/promtail/config
+    promtail_config_file: promtail-config.yaml
+    nginx_log_path: /var/log/nginx
+
+  tasks:
+    - name: Создать директории для конфигурации Promtail Docker
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /opt/promtail
+        - "{{ promtail_config_path }}"
+
+    - name: Скопировать образ Promtail с локальной машины на ВМ
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/{{ promtail_docker_image_tar }}"
+        dest: "/tmp/{{ promtail_docker_image_tar }}"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Загрузить образ Promtail в Docker на ВМ
+      ansible.builtin.shell: "sudo docker load -i /tmp/{{ promtail_docker_image_tar }}"
+      changed_when: true
+
+    - name: Создать конфигурационный файл Promtail
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/ansible_templates/promtail-config.yaml.j2"
+        dest: "{{ promtail_config_path }}/{{ promtail_config_file }}"
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Изменить права доступа к логам Nginx для Promtail
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: '0644' # Даем права на чтение всем
+        owner: root   # Устанавливаем владельца root
+        group: root   # Устанавливаем группу root
+      loop:
+        - "{{ nginx_log_path }}/access.log"
+        - "{{ nginx_log_path }}/error.log"
+      changed_when: true
+
+    - name: Принудительно остановить и удалить Promtail Docker контейнер (если существует)
+      ansible.builtin.shell: sudo docker rm -f promtail || true
+      changed_when: true
+
+    - name: Запустить Promtail Docker контейнер
+      ansible.builtin.shell: |
+        sudo docker run -d --name promtail \
+          --restart always \
+          -v "{{ promtail_config_path }}/{{ promtail_config_file }}":/etc/promtail/config.yaml \
+          -v "{{ nginx_log_path }}":"{{ nginx_log_path }}":ro \
+          -v /var/log/containers:/var/log/containers:ro \
+          -v /var/run/docker.sock:/var/run/docker.sock:ro \
+          {{ promtail_docker_image_name }} \
+          -config.file=/etc/promtail/config.yaml
+      args:
+        executable: /bin/bash
+      changed_when: true
+
+    - name: Проверить статус Promtail Docker контейнера
+      ansible.builtin.command: docker ps -f name=promtail
+      register: promtail_docker_status
+      changed_when: false
+    - debug:
+        msg: "{{ promtail_docker_status.stdout_lines }}"
