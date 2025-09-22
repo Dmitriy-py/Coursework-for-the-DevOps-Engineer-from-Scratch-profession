@@ -1,0 +1,92 @@
+---
+- name: Установка Docker (docker.io) и Docker Compose на веб-серверах
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Обновить кэш apt (перед установкой Docker)
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Установить Docker (docker.io) и python3-pip (для Docker Compose)
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - python3-pip
+        state: latest
+        update_cache: no # Уже обновили выше
+
+    - name: Скопировать Python-пакеты Docker SDK с локальной машины на ВМ
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/{{ item }}" # Копируем каждый .whl файл
+        dest: "/tmp/{{ item }}"
+        owner: root
+        group: root
+        mode: '0644'
+      loop:
+        - "certifi-2025.8.3-py3-none-any.whl"
+        - "charset_normalizer-3.4.3-py3-none-any.whl"
+        - "docker-4.4.4-py2.py3-none-any.whl"
+        - "idna-3.10-py3-none-any.whl"
+        - "requests-2.32.5-py3-none-any.whl"
+        - "six-1.17.0-py2.py3-none-any.whl"
+        - "urllib3-2.5.0-py3-none-any.whl"
+        - "websocket_client-1.8.0-py3-none-any.whl"
+
+    - name: Установить Python-пакеты Docker SDK из локальных файлов на ВМ
+      ansible.builtin.pip:
+        name: "/tmp/{{ item }}" # Теперь item - это имя файла, а не путь
+        state: present
+        executable: pip3
+        extra_args: "--no-index --find-links /tmp/" # Указываем pip искать в /tmp/
+      loop:
+        - "certifi-2025.8.3-py3-none-any.whl"
+        - "charset_normalizer-3.4.3-py3-none-any.whl"
+        - "docker-4.4.4-py2.py3-none-any.whl"
+        - "idna-3.10-py3-none-any.whl"
+        - "requests-2.32.5-py3-none-any.whl"
+        - "six-1.17.0-py2.py3-none-any.whl"
+        - "urllib3-2.5.0-py3-none-any.whl"
+        - "websocket_client-1.8.0-py3-none-any.whl"
+
+    - name: Запустить и включить Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+        daemon_reload: yes
+
+    - name: Ensure group "docker" exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+
+    - name: Добавить пользователя 'ubuntu' в группу 'docker'
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    # --- Установка Docker Compose (через локальный бинарник) ---
+    - name: Скопировать Docker Compose бинарник с локальной машины на ВМ
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/docker-compose-Linux-x86_64" # Файл на локальной машине, в директории плейбука
+        dest: /usr/local/bin/docker-compose
+        owner: root
+        group: root
+        mode: '0755' # Даем права на выполнение
+
+    # --- Проверки ---
+    - name: Проверить статус Docker
+      ansible.builtin.command: systemctl status docker
+      register: docker_status
+      changed_when: false
+    - debug:
+        msg: "{{ docker_status.stdout_lines }}"
+
+    - name: Проверить версию Docker Compose
+      ansible.builtin.command: /usr/local/bin/docker-compose --version # Полный путь для надежности
+      register: docker_compose_version
+      changed_when: false
+    - debug:
+        msg: "{{ docker_compose_version.stdout_lines }}"
