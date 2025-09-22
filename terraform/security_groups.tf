@@ -132,6 +132,54 @@ resource "yandex_vpc_security_group" "alb_sg" {
     v4_cidr_blocks = ["0.0.0.0/0"] # Или можно более конкретно указать IP подсетей веб-серверов
   }
 }
+# Security Group для Prometheus
+resource "yandex_vpc_security_group" "prometheus_sg" {
+  name        = "prometheus-sg"
+  network_id  = yandex_vpc_network.network.id
+
+  # Входящий SSH от Bastion
+  ingress {
+    protocol        = "tcp"
+    port            = 22
+    security_group_id = yandex_vpc_security_group.bastion_sg.id
+    description     = "Allow SSH from Bastion"
+  }
+  # Входящий трафик для Prometheus UI (порт 9090) с локальной машины (через SSH-туннель, используя Bastion)
+  ingress {
+    protocol       = "tcp"
+    port           = 9090
+    v4_cidr_blocks = ["0.0.0.0/0"] # !!! ВАЖНО: Замените на публичный IP вашей локальной машины (или 0.0.0.0/0 временно)
+    description    = "Allow Prometheus UI access (from your local machine via Bastion tunnel)"
+  }
+
+  # Исходящий трафик (Prometheus как клиент) к Node Exporter (9100) и Nginx Exporter (9113) на веб-серверах
+  egress {
+    protocol        = "tcp"
+    port            = 9100
+    v4_cidr_blocks = [
+      yandex_vpc_subnet.private_subnet_a.v4_cidr_blocks[0],
+      yandex_vpc_subnet.private_subnet_b.v4_cidr_blocks[0]
+    ]
+    description     = "Allow outbound to Node Exporter on Web Servers subnets"
+  }
+  egress {
+    protocol        = "tcp"
+    port            = 9113
+    v4_cidr_blocks = [
+      yandex_vpc_subnet.private_subnet_a.v4_cidr_blocks[0],
+      yandex_vpc_subnet.private_subnet_b.v4_cidr_blocks[0]
+    ]
+    description     = "Allow outbound to Nginx Exporter on Web Servers subnets"
+  }
+  # Исходящий трафик (Prometheus) для ping/DNS/обновлений
+  egress {
+    protocol        = "any"
+    v4_cidr_blocks  = ["0.0.0.0/0"]
+    description     = "Allow all outbound traffic for updates, DNS, etc."
+  }
+}
+
+
 resource "yandex_vpc_security_group" "loki_sg" {
   name        = "loki-sg"
   network_id  = yandex_vpc_network.network.id
