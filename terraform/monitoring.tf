@@ -27,31 +27,6 @@ resource "yandex_compute_instance" "prometheus_vm" {
     ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
   }
 }
-
-
-# Security Group для Grafana (ЗАКОММЕНТИРОВАНО)
- resource "yandex_vpc_security_group" "grafana_sg" {
-   name        = "grafana-sg"
-   network_id  = yandex_vpc_network.network.id
-   ingress {
-     protocol        = "tcp"
-     port            = 22
-     security_group_id = yandex_vpc_security_group.bastion_sg.id
-     description     = "Allow SSH from Bastion"
-   }
-   ingress {
-     protocol       = "tcp"
-     port           = 3000
-     v4_cidr_blocks = ["0.0.0.0/0"] # Замените на публичный IP вашей локальной машины (или 0.0.0.0/0 временно)
-     description    = "Allow Grafana UI access from your local machine"
-   }
-   egress {
-     protocol        = "any"
-     v4_cidr_blocks  = ["0.0.0.0/0"]
-     description     = "Allow all outbound traffic for updates, DNS, etc."
-   }
- }
-
  # ВМ для Grafana (ЗАКОММЕНТИРОВАНО)
  resource "yandex_compute_instance" "grafana_vm" {
    name        = "grafana-vm"
