@@ -1,0 +1,164 @@
+---
+- name: Setup Prometheus Server
+  hosts: prometheus # Этот плей запускается только на Prometheus VM
+  become: yes
+  vars:
+    # Эти переменные нужны для шаблона prometheus_config.yml.j2
+    web_server_a_ip: "{{ hostvars['web-server-a'].ansible_host }}"
+    web_server_b_ip: "{{ hostvars['web-server-b'].ansible_host }}"
+    prometheus_ip: "{{ hostvars['prometheus-vm'].ansible_host }}" # IP самого Prometheus
+  tasks:
+    - name: Обновить кэш apt (Prometheus)
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Установить Prometheus
+      ansible.builtin.apt:
+        name: prometheus
+        state: latest
+
+    # --- ЭТА ЗАДАЧА ТЕПЕРЬ НАХОДИТСЯ ЗДЕСЬ, ГДЕ ЕЙ И МЕСТО ---
+    - name: Добавить конфигурацию Prometheus
+      ansible.builtin.template:
+        src: "/home/vm1/yandex_cloud_infra/ansible_templates/prometheus.yml.j2" # <--- ИСПРАВЛЕНО: АБСОЛЮТНЫЙ ПУТЬ
+        dest: /etc/prometheus/prometheus.yml
+        owner: root
+        group: root
+        mode: '0644'
+      notify: Перезапустить Prometheus
+    # --- КОНЕЦ ПЕРЕМЕЩЕННОЙ ЗАДАЧИ ---
+
+    - name: Запустить и включить Prometheus service
+      ansible.builtin.service:
+        name: prometheus
+        state: started
+        enabled: yes
+
+    - name: Проверить статус Prometheus
+      ansible.builtin.command: systemctl status prometheus
+      register: prometheus_status
+      changed_when: false
+    - debug:
+        msg: "{{ prometheus_status.stdout_lines }}"
+
+  handlers:
+    - name: Перезапустить Prometheus
+      ansible.builtin.service:
+        name: prometheus
+        state: restarted
+
+- name: Setup Node Exporter and Nginx Exporter on Web Servers
+  hosts: webservers # Этот плей запускается только на веб-серверах
+  become: yes
+  vars:
+    # Эти переменные здесь не нужны, если они использовались только для prometheus.yml
+    # Но оставляем их на случай, если они нужны для других целей в этом плее.
+    prometheus_ip: "{{ hostvars['prometheus-vm'].ansible_host }}"
+    prometheus_server_ip: "{{ hostvars['prometheus-vm'].ansible_host }}" # Дублирует prometheus_ip
+  tasks:
+    - name: Обновить кэш apt (Web Servers)
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Установить Node Exporter
+      ansible.builtin.apt:
+        name: prometheus-node-exporter
+        state: latest
+
+    - name: Запустить и включить Node Exporter service
+      ansible.builtin.service:
+        name: prometheus-node-exporter
+        state: started
+        enabled: yes
+
+    - name: Установить Nginx Log Exporter
+      ansible.builtin.apt:
+        name: prometheus-nginx-exporter # Имя пакета может отличаться, иногда это nginx-exporter
+        state: latest
+      register: install_nginx_exporter
+      ignore_errors: yes
+
+    - name: Установить Nginx Log Exporter вручную (если пакет не найден)
+      when: install_nginx_exporter.failed
+      block:
+        - name: Скачать Nginx Exporter бинарник
+          ansible.builtin.get_url:
+            url: "https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/v1.1.0/nginx-prometheus-exporter_1.1.0_linux_amd64.tar.gz" # Актуальная версия, проверьте
+            dest: "/tmp/nginx-prometheus-exporter.tar.gz"
+            mode: '0644'
+        - name: Распаковать Nginx Exporter
+          ansible.builtin.unarchive:
+            src: "/tmp/nginx-prometheus-exporter.tar.gz"
+            dest: "/tmp"
+            remote_src: yes
+        - name: Копировать Nginx Exporter бинарник в /usr/local/bin
+          ansible.builtin.copy:
+            src: "/tmp/nginx-prometheus-exporter_1.1.0_linux_amd64/nginx-prometheus-exporter"
+            dest: "/usr/local/bin/nginx-prometheus-exporter"
+            mode: '0755'
+            remote_src: yes
+        - name: Создать systemd сервис для Nginx Exporter
+          ansible.builtin.copy:
+            dest: "/etc/systemd/system/nginx-prometheus-exporter.service"
+            content: |
+              [Unit]
+              Description=Nginx Prometheus Exporter
+              Wants=network-online.target
+              After=network-online.target
+
+              [Service]
+              User=nginx
+              Group=nginx
+              Type=simple
+              ExecStart=/usr/local/bin/nginx-prometheus-exporter -nginx.plus=false -nginx.scrape-uri=http://127.0.0.1:80/nginx_status
+              Restart=always
+
+              [Install]
+              WantedBy=multi-user.target
+        - name: Перезагрузить systemd и запустить Nginx Exporter
+          ansible.builtin.systemd:
+            daemon_reload: yes
+            name: nginx-prometheus-exporter
+            state: started
+            enabled: yes
+
+    - name: Создать /etc/default/prometheus-nginx-exporter
+      ansible.builtin.copy:
+        dest: /etc/default/prometheus-nginx-exporter
+        content: |
+          # Set the command-line arguments for NGINX Prometheus Exporter
+          ARGS="--nginx.scrape-uri=http://127.0.0.1:80/nginx_status --web.listen-address=0.0.0.0:9113"
+      when: not install_nginx_exporter.failed
+      notify: Перезапустить Nginx Exporter
+
+    - name: Запустить и включить Nginx Exporter service (если установлен как пакет)
+      when: not install_nginx_exporter.failed
+      ansible.builtin.service:
+        name: prometheus-nginx-exporter
+        state: started
+        enabled: yes
+
+    - name: Проверить статус Node Exporter
+      ansible.builtin.command: systemctl status prometheus-node-exporter
+      register: node_exporter_status
+      changed_when: false
+
+    - name: Вывести статус Node Exporter
+      debug:
+        msg: "{{ node_exporter_status.stdout_lines }}"
+
+    - name: Проверить статус Nginx Exporter
+      ansible.builtin.command: systemctl status prometheus-nginx-exporter
+      register: nginx_exporter_status
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Вывести статус Nginx Exporter
+      debug:
+        msg: "{{ nginx_exporter_status.stdout_lines }}"
+
+  handlers:
+    - name: Перезапустить Nginx Exporter
+      ansible.builtin.service:
+        name: nginx-prometheus-exporter
+        state: restarted
