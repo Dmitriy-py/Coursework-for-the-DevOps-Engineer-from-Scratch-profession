@@ -9,3 +9,11 @@ output "loki_internal_ip" {
   description = "Internal IP address of the Loki VM"
   value       = yandex_compute_instance.loki_vm.network_interface.0.ip_address
 }
+output "prometheus_internal_ip" {
+  description = "Internal IP address of the Prometheus VM"
+  value       = yandex_compute_instance.prometheus_vm.network_interface.0.ip_address
+ }
+output "grafana_internal_ip" {
+  description = "Internal IP address of the Grafana VM"
+  value       = yandex_compute_instance.grafana_vm.network_interface.0.ip_address
+ }
