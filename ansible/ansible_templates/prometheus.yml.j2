@@ -1,12 +1,12 @@
 global:
-  scrape_interval: 15s # Как часто Prometheus собирает метрики
+  scrape_interval: 15s
   external_labels:
     monitor: 'codelab-monitor'
 
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9090']  # Prometheus сам себя мониторит
+      - targets: ['localhost:9090']
 
   - job_name: 'node_exporter'
     static_configs:
@@ -14,10 +14,9 @@ scrape_configs:
           '{{ web_server_a_ip }}:9100',
           '{{ web_server_b_ip }}:9100'
         ]
-        # --- ИСПРАВЛЕНО: labels теперь внутри static_configs ---
+      
         labels:
           group: 'webservers'
-        # --- КОНЕЦ ИСПРАВЛЕНИЯ ---
 
   - job_name: 'nginx_exporter'
     static_configs:
@@ -25,6 +24,5 @@ scrape_configs:
           '{{ web_server_a_ip }}:9113',
           '{{ web_server_b_ip }}:9113'
         ]
-        # --- ИСПРАВЛЕНО: labels теперь внутри static_configs ---
         labels:
           group: 'webservers'
