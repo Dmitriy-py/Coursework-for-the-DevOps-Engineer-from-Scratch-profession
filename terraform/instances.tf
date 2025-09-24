@@ -1,6 +1,6 @@
 resource "yandex_compute_instance" "web_server_a" {
   name        = "web-server-a"
-  zone        = "ru-central1-a" # Проверьте зону, если она должна быть ru-central1-b
+  zone        = "ru-central1-a"
   platform_id = "standard-v1"
   hostname    = "web-server-a"
 
@@ -11,7 +11,7 @@ resource "yandex_compute_instance" "web_server_a" {
 
   boot_disk {
     initialize_params {
-      image_id = "fd8l04iucc4vsh00rkb1" # ID образа Ubuntu Linux
+      image_id = "fd8l04iucc4vsh00rkb1"
       size  = 20
     }
   }
@@ -19,11 +19,11 @@ resource "yandex_compute_instance" "web_server_a" {
   network_interface {
     subnet_id         = yandex_vpc_subnet.private_subnet_a.id
     security_group_ids = [yandex_vpc_security_group.web_sg.id]
-    nat               = false # Нет публичного IP
+    nat               = false
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}" # Ваш публичный SSH-ключ
+    ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
   }
 }
 
@@ -40,7 +40,7 @@ resource "yandex_compute_instance" "web_server_b" {
 
   boot_disk {
     initialize_params {
-      image_id = "fd8l04iucc4vsh00rkb1" # ID образа Ubuntu Linux
+      image_id = "fd8l04iucc4vsh00rkb1"
       size  = 20
     }
   }
@@ -48,10 +48,10 @@ resource "yandex_compute_instance" "web_server_b" {
   network_interface {
     subnet_id         = yandex_vpc_subnet.private_subnet_b.id
     security_group_ids = [yandex_vpc_security_group.web_sg.id]
-    nat               = false # Нет публичного IP
+    nat               = false
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}" # Ваш публичный SSH-ключ
+    ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
   }
 }
