@@ -57,14 +57,14 @@ resource "yandex_vpc_security_group" "web_sg" {
   ingress {
       protocol        = "tcp"
       port            = 9100
-      v4_cidr_blocks  = [yandex_vpc_subnet.private_subnet_a.v4_cidr_blocks[0]] # Prometheus в private_subnet_a
+      v4_cidr_blocks  = [yandex_vpc_subnet.private_subnet_a.v4_cidr_blocks[0]]
       description     = "Allow Node Exporter metrics from Prometheus"
   }
   # Входящий трафик для Nginx Exporter (порт 9113) от Prometheus
   ingress {
       protocol        = "tcp"
       port            = 9113
-      v4_cidr_blocks  = [yandex_vpc_subnet.private_subnet_a.v4_cidr_blocks[0]] # Prometheus в private_subnet_a
+      v4_cidr_blocks  = [yandex_vpc_subnet.private_subnet_a.v4_cidr_blocks[0]]
       description     = "Allow Nginx Exporter metrics from Prometheus"
   }
 
@@ -140,7 +140,7 @@ resource "yandex_vpc_security_group" "prometheus_sg" {
     security_group_id = yandex_vpc_security_group.bastion_sg.id
     description     = "Allow SSH from Bastion"
   }
-  # Входящий трафик для Prometheus UI (порт 9090) с локальной машины (через SSH-туннель, используя Bastion)
+
   ingress {
     protocol       = "tcp"
     port           = 9090
@@ -148,7 +148,6 @@ resource "yandex_vpc_security_group" "prometheus_sg" {
     description    = "Allow Prometheus UI access (from your local machine via Bastion tunnel)"
   }
 
-  # Исходящий трафик (Prometheus как клиент) к Node Exporter (9100) и Nginx Exporter (9113) на веб-серверах
   egress {
     protocol        = "tcp"
     port            = 9100
@@ -187,7 +186,7 @@ resource "yandex_vpc_security_group" "prometheus_sg" {
    ingress {
      protocol       = "tcp"
      port           = 3000
-     v4_cidr_blocks = ["0.0.0.0/0"] # Замените на публичный IP вашей локальной машины (или 0.0.0.0/0 временно)
+     v4_cidr_blocks = ["0.0.0.0/0"]
      description    = "Allow Grafana UI access from your local machine"
    }
    egress {
