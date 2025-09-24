@@ -3,13 +3,11 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    /* --- ФОН С ВАШИМ ИЗОБРАЖЕНИЕМ --- */
-    background: url('ai_background.jpg') no-repeat center center fixed; /* Указываем путь к вашему изображению */
-    background-size: cover; /* Растягивает изображение, чтобы оно покрывало весь фон */
-    background-color: #0f0c29; /* Запасной цвет, если изображение не загрузилось */
-    /* --- КОНЕЦ ФОНА --- */
+    background: url('ai_background.jpg') no-repeat center center fixed; 
+    background-size: cover;
+    background-color: #0f0c29;
 
-    color: #f0f8ff; /* Очень светлый, почти белый цвет для основного текста */
+    color: #f0f8ff;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -17,15 +15,15 @@ body {
 }
 
 header {
-    background: rgba(0, 0, 0, 0.6); /* Темнее и прозрачнее для лучшего контраста */
+    background: rgba(0, 0, 0, 0.6);
     padding: 1.5rem 0;
     text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6); /* Усилить тень */
-    animation: fadeInDown 1s ease-out; /* Анимация появления */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    animation: fadeInDown 1s ease-out;
 }
 
 header h1 {
-    color: #8cffff; /* Яркий бирюзовый */
-    text-shadow: 0 0 15px rgba(140, 255, 255, 1); /* Усилить свечение */
-    margin-bottom: 5px; /* Немного уменьшить отступ */
+    color: #8cffff;
+    text-shadow: 0 0 15px rgba(140, 255, 255, 1);
+    margin-bottom: 5px;
 }
