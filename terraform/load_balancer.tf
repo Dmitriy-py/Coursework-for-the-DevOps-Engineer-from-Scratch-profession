@@ -40,11 +40,6 @@ resource "yandex_alb_virtual_host" "my_virtual_host" {
       http_route_action {
         backend_group_id = yandex_alb_backend_group.my_backend_group.id
       }
-      # match {
-      #   path {
-      #     prefix = "/"
-      #   }
-      # }
     }
   }
 }
