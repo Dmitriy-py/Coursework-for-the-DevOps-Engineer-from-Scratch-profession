@@ -4,8 +4,8 @@
   become: yes
 
   vars:
-    app_root_dir: "/var/www/ai_website" # Корневая директория для вашего сайта на сервере
-    document_root_dir: "{{ app_root_dir }}/html" # Папка для HTML-файлов
+    app_root_dir: "/var/www/ai_website" 
+    document_root_dir: "{{ app_root_dir }}/html"
 
   tasks:
     - name: Обновить кэш apt и установить NGINX
@@ -25,8 +25,8 @@
 
     - name: Копировать файлы сайта на сервер
       copy:
-        src: "{{ playbook_dir }}/site_content/" # Источник - локальная папка site_content
-        dest: "{{ document_root_dir }}/" # Назначение на сервере
+        src: "{{ playbook_dir }}/site_content/"
+        dest: "{{ document_root_dir }}/"
         owner: www-data
         group: www-data
         mode: '0644'
@@ -34,7 +34,7 @@
 
     - name: Применить шаблон конфигурации NGINX
       template:
-        src: "{{ playbook_dir }}/ansible_templates/nginx.conf.j2" # Источник - локальный шаблон
+        src: "{{ playbook_dir }}/ansible_templates/nginx.conf.j2"
         dest: "/etc/nginx/sites-available/default"
         owner: root
         group: root
@@ -47,15 +47,15 @@
         src: "/etc/nginx/sites-available/default"
         dest: "/etc/nginx/sites-enabled/default"
         state: link
-        force: yes # Перезаписать, если симлинк уже существует
+        force: yes
       notify: Перезапустить NGINX
 
     - name: Удалить дефолтную конфигурацию Nginx (если она есть)
       file:
-        path: "/etc/nginx/sites-enabled/default_nginx.conf" # Или другое имя дефолтного файла
+        path: "/etc/nginx/sites-enabled/default_nginx.conf"
         state: absent
       notify: Перезапустить NGINX
-      ignore_errors: yes # Игнорировать, если файла нет
+      ignore_errors: yes
 
     - name: Запустить службу NGINX (убедиться, что она работает)
       service:
