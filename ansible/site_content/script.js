@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
         askQuestionBtn.addEventListener('click', () => {
             const question = aiQuestionInput.value.trim();
             if (question) {
-                // Это простая имитация ответа ИИ. В реальном проекте здесь будет API-вызов к настоящему ИИ.
                 const responses = [
                     "ИИ очень быстро развивается, и его потенциал огромен!",
                     "Ключевые области ИИ включают машинное обучение и глубокое обучение.",
@@ -31,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ];
                 const randomResponse = responses[Math.floor(Math.random() * responses.length)];
                 aiAnswer.textContent = `Ваш вопрос: "${question}". Ответ ИИ: "${randomResponse}"`;
-                aiQuestionInput.value = ''; // Очистить поле
+                aiQuestionInput.value = ''; 
             } else {
                 aiAnswer.textContent = "Пожалуйста, введите ваш вопрос.";
             }
