@@ -1,7 +1,6 @@
-# loki.tf
 resource "yandex_compute_instance" "loki_vm" {
   name               = "loki-vm"
-  zone               = "ru-central1-b" # Убедитесь, что это ваша зона
+  zone               = "ru-central1-b"
   platform_id        = "standard-v1"
   hostname           = "loki-vm"
   allow_stopping_for_update = true
@@ -13,13 +12,13 @@ resource "yandex_compute_instance" "loki_vm" {
 
   boot_disk {
     initialize_params {
-      image_id = "fd8l04iucc4vsh00rkb1" # ID образа Ubuntu 22.04 LTS
+      image_id = "fd8l04iucc4vsh00rkb1"
       size     = 300
     }
   }
 
   network_interface {
-    subnet_id          = yandex_vpc_subnet.private_subnet_b.id # <--- УБЕДИТЕСЬ, ЧТО ЗДЕСЬ private_subnet_b.id
+    subnet_id          = yandex_vpc_subnet.private_subnet_b.id
     security_group_ids = [yandex_vpc_security_group.loki_sg.id]
     nat                = true
   }
