@@ -36,7 +36,7 @@
       ansible.builtin.file:
         path: "{{ loki_data_path }}"
         state: directory
-        mode: '0777' # Даем полные права, чтобы Loki мог писать
+        mode: '0777'
       changed_when: true
 
     - name: Создать конфигурационный файл Loki
@@ -47,7 +47,6 @@
         group: root
         mode: '0644'
 
-    # --- ЗАДАЧИ ДЛЯ ОБРАЗА LOKI (ПРАВИЛЬНОЕ РАСПОЛОЖЕНИЕ: ПЕРЕД ЗАПУСКОМ КОНТЕЙНЕРА) ---
     - name: Скопировать образ Loki с локальной машины на ВМ
       ansible.builtin.copy:
         src: "{{ playbook_dir }}/{{ loki_docker_image_tar }}"
@@ -59,9 +58,7 @@
     - name: Загрузить образ Loki в Docker на ВМ
       ansible.builtin.shell: "sudo docker load -i /tmp/{{ loki_docker_image_tar }}"
       changed_when: true
-    # --- КОНЕЦ ЗАДАЧ ДЛЯ ОБРАЗА LOKI ---
-
-    # --- ЗАДАЧИ ДЛЯ ЗАПУСКА КОНТЕЙНЕРА LOKI (ТОЛЬКО ОДНА ЗАДАЧА!) ---
+      
     - name: Принудительно остановить и удалить Loki Docker контейнер (если существует)
       ansible.builtin.shell: sudo docker rm -f loki || true
       changed_when: true
@@ -75,7 +72,6 @@
           -v {{ loki_data_path }}:/loki \
           {{ loki_docker_image_name }} -config.file=/etc/loki/config.yaml
       changed_when: true
-    # --- КОНЕЦ ЗАДАЧ ДЛЯ ЗАПУСКА КОНТЕЙНЕРА LOKI ---
 
     - name: Проверить статус Loki Docker контейнера
       ansible.builtin.command: docker ps -f name=loki
