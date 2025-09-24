@@ -9,7 +9,6 @@ resource "yandex_compute_snapshot_schedule" "daily_vm_snapshots" {
     yandex_compute_instance.grafana_vm.boot_disk.0.disk_id,
     yandex_compute_instance.loki_vm.boot_disk.0.disk_id,
     yandex_compute_instance.prometheus_vm.boot_disk.0.disk_id,
-    # Добавьте другие ВМ, если они у вас есть
   ]
 
   # Политика расписания: ежедневное копирование
