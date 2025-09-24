@@ -3,7 +3,7 @@
   hosts: webservers
   become: yes
   vars:
-    loki_host: "10.1.0.4" # Внутренний IP вашей Loki VM
+    loki_host: "10.1.0.4"
     promtail_docker_image_tar: "promtail-2.9.0.tar"
     promtail_docker_image_name: "grafana/promtail:2.9.0"
     promtail_config_path: /opt/promtail/config
@@ -43,9 +43,9 @@
     - name: Изменить права доступа к логам Nginx для Promtail
       ansible.builtin.file:
         path: "{{ item }}"
-        mode: '0644' # Даем права на чтение всем
-        owner: root   # Устанавливаем владельца root
-        group: root   # Устанавливаем группу root
+        mode: '0644'
+        owner: root
+        group: root
       loop:
         - "{{ nginx_log_path }}/access.log"
         - "{{ nginx_log_path }}/error.log"
