@@ -14,11 +14,11 @@
           - docker.io
           - python3-pip
         state: latest
-        update_cache: no # Уже обновили выше
+        update_cache: no
 
     - name: Скопировать Python-пакеты Docker SDK с локальной машины на ВМ
       ansible.builtin.copy:
-        src: "{{ playbook_dir }}/{{ item }}" # Копируем каждый .whl файл
+        src: "{{ playbook_dir }}/{{ item }}"
         dest: "/tmp/{{ item }}"
         owner: root
         group: root
@@ -35,10 +35,10 @@
 
     - name: Установить Python-пакеты Docker SDK из локальных файлов на ВМ
       ansible.builtin.pip:
-        name: "/tmp/{{ item }}" # Теперь item - это имя файла, а не путь
+        name: "/tmp/{{ item }}"
         state: present
         executable: pip3
-        extra_args: "--no-index --find-links /tmp/" # Указываем pip искать в /tmp/
+        extra_args: "--no-index --find-links /tmp/"
       loop:
         - "certifi-2025.8.3-py3-none-any.whl"
         - "charset_normalizer-3.4.3-py3-none-any.whl"
@@ -67,16 +67,14 @@
         groups: docker
         append: yes
 
-    # --- Установка Docker Compose (через локальный бинарник) ---
     - name: Скопировать Docker Compose бинарник с локальной машины на ВМ
       ansible.builtin.copy:
-        src: "{{ playbook_dir }}/docker-compose-Linux-x86_64" # Файл на локальной машине, в директории плейбука
+        src: "{{ playbook_dir }}/docker-compose-Linux-x86_64"
         dest: /usr/local/bin/docker-compose
         owner: root
         group: root
-        mode: '0755' # Даем права на выполнение
+        mode: '0755'
 
-    # --- Проверки ---
     - name: Проверить статус Docker
       ansible.builtin.command: systemctl status docker
       register: docker_status
@@ -85,7 +83,7 @@
         msg: "{{ docker_status.stdout_lines }}"
 
     - name: Проверить версию Docker Compose
-      ansible.builtin.command: /usr/local/bin/docker-compose --version # Полный путь для надежности
+      ansible.builtin.command: /usr/local/bin/docker-compose --version
       register: docker_compose_version
       changed_when: false
     - debug:
