@@ -16,10 +16,10 @@ resource "yandex_vpc_security_group" "bastion_sg" {
     protocol    = "icmp"
     from_port   = 0
     to_port     = 0
-    v4_cidr_blocks = ["0.0.0.0/0"] # Ping из любого источника
+    v4_cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
-    protocol    = "any" # Весь исходящий трафик разрешен
+    protocol    = "any"
     v4_cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -54,8 +54,6 @@ resource "yandex_vpc_security_group" "web_sg" {
     security_group_id = yandex_vpc_security_group.bastion_sg.id
   }
 
-  # Входящий трафик для Node Exporter (порт 9100) от Prometheus
-  # Используем CIDR-блок подсети Prometheus, чтобы избежать циклической зависимости
   ingress {
       protocol        = "tcp"
       port            = 9100
@@ -63,7 +61,6 @@ resource "yandex_vpc_security_group" "web_sg" {
       description     = "Allow Node Exporter metrics from Prometheus"
   }
   # Входящий трафик для Nginx Exporter (порт 9113) от Prometheus
-  # Используем CIDR-блок подсети Prometheus, чтобы избежать циклической зависимости
   ingress {
       protocol        = "tcp"
       port            = 9113
@@ -71,12 +68,11 @@ resource "yandex_vpc_security_group" "web_sg" {
       description     = "Allow Nginx Exporter metrics from Prometheus"
   }
 
-  # Исходящий трафик в интернет (через NAT, для обновлений и т.д.)
   egress {
     protocol       = "any"
     v4_cidr_blocks = ["0.0.0.0/0"]
   }
-  # Явные правила для исходящего HTTP/HTTPS (на случай, если "any" не работает)
+
   egress {
     protocol       = "tcp"
     port           = 80
@@ -94,7 +90,7 @@ egress {
     protocol        = "tcp"
     port            = 3100
     # Используем CIDR-блок подсети, где находится Loki VM
-    v4_cidr_blocks  = [yandex_vpc_subnet.private_subnet_b.v4_cidr_blocks[0]] # <--- Замените на CIDR подсети вашей Loki VM
+    v4_cidr_blocks  = [yandex_vpc_subnet.private_subnet_b.v4_cidr_blocks[0]]
     description     = "Allow outbound to Loki (Promtail pushing logs)"
   }
 }
@@ -128,8 +124,8 @@ resource "yandex_vpc_security_group" "alb_sg" {
 
   # Исходящий трафик к веб-серверам
   egress {
-    protocol       = "any" # Разрешаем исходящий трафик ко всем, включая веб-серверы
-    v4_cidr_blocks = ["0.0.0.0/0"] # Или можно более конкретно указать IP подсетей веб-серверов
+    protocol       = "any"
+    v4_cidr_blocks = ["0.0.0.0/0"]
   }
 }
 # Security Group для Prometheus
@@ -148,7 +144,7 @@ resource "yandex_vpc_security_group" "prometheus_sg" {
   ingress {
     protocol       = "tcp"
     port           = 9090
-    v4_cidr_blocks = ["0.0.0.0/0"] # !!! ВАЖНО: Замените на публичный IP вашей локальной машины (или 0.0.0.0/0 временно)
+    v4_cidr_blocks = ["0.0.0.0/0"]
     description    = "Allow Prometheus UI access (from your local machine via Bastion tunnel)"
   }
 
@@ -222,8 +218,8 @@ resource "yandex_vpc_security_group" "loki_sg" {
     protocol       = "tcp"
     port           = 3100
     v4_cidr_blocks = [
-      yandex_vpc_subnet.private_subnet_a.v4_cidr_blocks[0], # Веб-серверы в private-subnet-a
-      yandex_vpc_subnet.private_subnet_b.v4_cidr_blocks[0]  # Веб-серверы в private-subnet-b
+      yandex_vpc_subnet.private_subnet_a.v4_cidr_blocks[0],
+      yandex_vpc_subnet.private_subnet_b.v4_cidr_blocks[0]
     ]
     description    = "Allow Loki ingestion from Web Servers (Promtail)"
   }
@@ -234,22 +230,22 @@ resource "yandex_vpc_security_group" "loki_sg" {
     security_group_id = yandex_vpc_security_group.grafana_sg.id
     description       = "Allow Loki queries from Grafana VM"
   }
-  # Ingress для метрик Promtail (порт 9080), если они будут использоваться
+
   ingress {
     protocol          = "tcp"
     port              = 9080
-    security_group_id = yandex_vpc_security_group.prometheus_sg.id # Если Prometheus будет собирать метрики Promtail
+    security_group_id = yandex_vpc_security_group.prometheus_sg.id
     description       = "Allow Promtail metrics from Prometheus"
   }
 
-  # Egress (исходящие) правила
+  # Egress
   egress {
     protocol       = "any"
     v4_cidr_blocks = ["0.0.0.0/0"]
     description    = "Allow all outbound traffic"
   }
 
-    # Egress (исходящие) правила
+    # Egress
   egress {
     protocol       = "any"
     v4_cidr_blocks = ["0.0.0.0/0"]
