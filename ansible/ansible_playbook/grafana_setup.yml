@@ -3,7 +3,7 @@
   hosts: grafana
   become: yes
   vars:
-    prometheus_ip: "{{ hostvars['prometheus-vm'].ansible_host }}" # IP Prometheus
+    prometheus_ip: "{{ hostvars['prometheus-vm'].ansible_host }}"
   tasks:
     - name: Обновить кэш apt
       apt:
@@ -18,17 +18,13 @@
         - software-properties-common
         - wget
 
-        # ... (предыдущие задачи) ...
-
     - name: Скопировать GPG-ключ Grafana с локальной машины и добавить его
       ansible.builtin.copy:
-        src: /home/vm1/grafana_gpg.key # Путь к ключу на локальной машине
-        dest: /etc/apt/trusted.gpg.d/grafana.gpg # Целевой путь на Grafana VM
+        src: /home/vm1/grafana_gpg.key 
+        dest: /etc/apt/trusted.gpg.d/grafana.gpg 
         owner: root
         group: root
         mode: '0644'
-
-        # ... (следующие задачи) ...
 
     - name: Установить зависимости для Grafana DEB-пакета
       ansible.builtin.apt:
@@ -37,7 +33,7 @@
           - libfontconfig1
           - musl
         state: present
-        update_cache: yes # Обновим кэш перед установкой зависимостей
+        update_cache: yes
 
     - name: Проверить наличие DEB-пакета Grafana
       ansible.builtin.stat:
@@ -66,7 +62,6 @@
     - debug:
         msg: "{{ grafana_status.stdout_lines }}"
 
-    # --- Настройка Prometheus как источника данных в Grafana ---
     - name: Создать директорию для провайдера данных Grafana
       ansible.builtin.file:
         path: /etc/grafana/provisioning/datasources
@@ -84,7 +79,6 @@
         mode: '0644'
       notify: Перезапустить Grafana
 
-# --- Handlers для Grafana ---
   handlers:
     - name: Перезапустить Grafana
       service:
