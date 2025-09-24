@@ -3,8 +3,8 @@
   hosts: prometheus
   become: yes
   vars:
-    web_server_a_ip: "10.1.0.30" # !!! Замените на актуальный IP
-    web_server_b_ip: "10.2.0.6" # !!! Замените на актуальный IP
+    web_server_a_ip: "10.1.0.30"
+    web_server_b_ip: "10.2.0.6"
   tasks:
     - name: Обновить файл конфигурации Prometheus
       template:
