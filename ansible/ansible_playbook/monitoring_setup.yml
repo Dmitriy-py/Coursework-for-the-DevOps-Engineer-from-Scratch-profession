@@ -1,12 +1,12 @@
 ---
 - name: Setup Prometheus Server
-  hosts: prometheus # Этот плей запускается только на Prometheus VM
+  hosts: prometheus 
   become: yes
   vars:
     # Эти переменные нужны для шаблона prometheus_config.yml.j2
     web_server_a_ip: "{{ hostvars['web-server-a'].ansible_host }}"
     web_server_b_ip: "{{ hostvars['web-server-b'].ansible_host }}"
-    prometheus_ip: "{{ hostvars['prometheus-vm'].ansible_host }}" # IP самого Prometheus
+    prometheus_ip: "{{ hostvars['prometheus-vm'].ansible_host }}" 
   tasks:
     - name: Обновить кэш apt (Prometheus)
       ansible.builtin.apt:
@@ -17,16 +17,14 @@
         name: prometheus
         state: latest
 
-    # --- ЭТА ЗАДАЧА ТЕПЕРЬ НАХОДИТСЯ ЗДЕСЬ, ГДЕ ЕЙ И МЕСТО ---
     - name: Добавить конфигурацию Prometheus
       ansible.builtin.template:
-        src: "/home/vm1/yandex_cloud_infra/ansible_templates/prometheus.yml.j2" # <--- ИСПРАВЛЕНО: АБСОЛЮТНЫЙ ПУТЬ
+        src: "/home/vm1/yandex_cloud_infra/ansible_templates/prometheus.yml.j2"
         dest: /etc/prometheus/prometheus.yml
         owner: root
         group: root
         mode: '0644'
       notify: Перезапустить Prometheus
-    # --- КОНЕЦ ПЕРЕМЕЩЕННОЙ ЗАДАЧИ ---
 
     - name: Запустить и включить Prometheus service
       ansible.builtin.service:
@@ -48,13 +46,11 @@
         state: restarted
 
 - name: Setup Node Exporter and Nginx Exporter on Web Servers
-  hosts: webservers # Этот плей запускается только на веб-серверах
+  hosts: webservers 
   become: yes
   vars:
-    # Эти переменные здесь не нужны, если они использовались только для prometheus.yml
-    # Но оставляем их на случай, если они нужны для других целей в этом плее.
     prometheus_ip: "{{ hostvars['prometheus-vm'].ansible_host }}"
-    prometheus_server_ip: "{{ hostvars['prometheus-vm'].ansible_host }}" # Дублирует prometheus_ip
+    prometheus_server_ip: "{{ hostvars['prometheus-vm'].ansible_host }}"
   tasks:
     - name: Обновить кэш apt (Web Servers)
       ansible.builtin.apt:
@@ -73,7 +69,7 @@
 
     - name: Установить Nginx Log Exporter
       ansible.builtin.apt:
-        name: prometheus-nginx-exporter # Имя пакета может отличаться, иногда это nginx-exporter
+        name: prometheus-nginx-exporter
         state: latest
       register: install_nginx_exporter
       ignore_errors: yes
@@ -83,7 +79,7 @@
       block:
         - name: Скачать Nginx Exporter бинарник
           ansible.builtin.get_url:
-            url: "https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/v1.1.0/nginx-prometheus-exporter_1.1.0_linux_amd64.tar.gz" # Актуальная версия, проверьте
+            url: "https://github.com/nginxinc/nginx-prometheus-exporter/releases/download/v1.1.0/nginx-prometheus-exporter_1.1.0_linux_amd64.tar.gz"
             dest: "/tmp/nginx-prometheus-exporter.tar.gz"
             mode: '0644'
         - name: Распаковать Nginx Exporter
