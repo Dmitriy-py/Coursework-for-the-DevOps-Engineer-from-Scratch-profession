@@ -4,21 +4,20 @@ resource "yandex_alb_load_balancer" "my_alb" {
   
   allocation_policy {
     location {
-      zone_id   = "ru-central1-b" # Используйте zone_id
+      zone_id   = "ru-central1-b"
       subnet_id = yandex_vpc_subnet.public_subnet.id
     }
   }
 
   listener {
     name = "http-listener"
-    # ИСПРАВЛЕНО: endpoint теперь имеет 'address' и 'ports'
     endpoint {
       address {
-        external_ipv4_address {} # Слушаем на внешнем IPv4 адресе
+        external_ipv4_address {}
       }
-      ports = [80] # Слушаем на порту 80
+      ports = [80]
     }
-    http { # Этот блок определяет протокол как HTTP
+    http {
       handler {
         http_router_id = yandex_alb_http_router.my_http_router.id
       }
@@ -30,7 +29,6 @@ resource "yandex_alb_load_balancer" "my_alb" {
 
 resource "yandex_alb_http_router" "my_http_router" {
   name = "my-http-router"
-  # network_id УДАЛЕН отсюда
 }
 
 resource "yandex_alb_virtual_host" "my_virtual_host" {
@@ -39,7 +37,6 @@ resource "yandex_alb_virtual_host" "my_virtual_host" {
   route {
     name = "my-route"
     http_route {
-      # ИСПРАВЛЕНО: http_route_action напрямую внутри http_route
       http_route_action {
         backend_group_id = yandex_alb_backend_group.my_backend_group.id
       }
