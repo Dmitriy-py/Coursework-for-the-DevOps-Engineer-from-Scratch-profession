@@ -3,7 +3,6 @@
   hosts: prometheus 
   become: yes
   vars:
-    # Эти переменные нужны для шаблона prometheus_config.yml.j2
     web_server_a_ip: "{{ hostvars['web-server-a'].ansible_host }}"
     web_server_b_ip: "{{ hostvars['web-server-b'].ansible_host }}"
     prometheus_ip: "{{ hostvars['prometheus-vm'].ansible_host }}" 
