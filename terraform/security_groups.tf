@@ -99,7 +99,6 @@ resource "yandex_vpc_security_group" "alb_sg" {
   name        = "alb-sg"
   network_id  = yandex_vpc_network.network.id
 
-  # Входящий HTTP/HTTPS из интернета
   ingress {
     protocol       = "tcp"
     port           = 80
@@ -116,7 +115,7 @@ resource "yandex_vpc_security_group" "alb_sg" {
        to_port        = 0
        v4_cidr_blocks = ["0.0.0.0/0"]
   }
-  # Health checks от самого Yandex Load Balancer
+ 
   ingress {
     protocol          = "any"
     predefined_target = "loadbalancer_healthchecks"
@@ -128,7 +127,7 @@ resource "yandex_vpc_security_group" "alb_sg" {
     v4_cidr_blocks = ["0.0.0.0/0"]
   }
 }
-# Security Group для Prometheus
+
 resource "yandex_vpc_security_group" "prometheus_sg" {
   name        = "prometheus-sg"
   network_id  = yandex_vpc_network.network.id
@@ -166,14 +165,14 @@ resource "yandex_vpc_security_group" "prometheus_sg" {
     ]
     description     = "Allow outbound to Nginx Exporter on Web Servers subnets"
   }
-  # Исходящий трафик (Prometheus) для ping/DNS/обновлений
+
   egress {
     protocol        = "any"
     v4_cidr_blocks  = ["0.0.0.0/0"]
     description     = "Allow all outbound traffic for updates, DNS, etc."
   }
 }
-# Security Group для Grafana
+
  resource "yandex_vpc_security_group" "grafana_sg" {
    name        = "grafana-sg"
    network_id  = yandex_vpc_network.network.id
