@@ -27,7 +27,7 @@ resource "yandex_compute_instance" "prometheus_vm" {
     ssh-keys = "ubuntu:${file("~/.ssh/id_ed25519.pub")}"
   }
 }
- # ВМ для Grafana (ЗАКОММЕНТИРОВАНО)
+ # ВМ для Grafana
  resource "yandex_compute_instance" "grafana_vm" {
    name        = "grafana-vm"
    zone        = "ru-central1-b"
